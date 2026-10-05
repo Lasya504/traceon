@@ -1,25 +1,90 @@
+import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 
 export default function TopAppBar() {
-  return (
-    <header className="flex items-center justify-between px-5 pt-4 pb-3">
-      {/* Logo + Title */}
-      <div className="flex items-center gap-2.5">
-        <Logo size={28} />
-        <span className="text-[19px] font-bold text-text tracking-tight">TraceOn</span>
-      </div>
+  const navigate = useNavigate();
 
-      {/* Simple menu icon (replacing profile avatar for minimal look) */}
+  return (
+    <header className="top-bar">
+      {/* Brand */}
       <button
-        className="w-10 h-10 -mr-2 rounded-full flex items-center justify-center text-text-muted hover:bg-hover transition-colors"
-        aria-label="Menu"
+        onClick={() => navigate('/dashboard')}
+        className="touch-scale"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+        }}
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
+        <Logo size={32} />
+        <span
+          style={{
+            fontSize: '19px',
+            fontWeight: 800,
+            color: '#F1F5F9',
+            letterSpacing: '-0.03em',
+          }}
+        >
+          TraceOn
+        </span>
       </button>
+
+      {/* Account / Status Pill */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {/* Live Sheet Indicator */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 5,
+            padding: '4px 10px',
+            borderRadius: '99px',
+            background: 'rgba(52, 168, 83, 0.1)',
+            border: '1px solid rgba(52, 168, 83, 0.25)',
+          }}
+        >
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              backgroundColor: '#34A853',
+              boxShadow: '0 0 6px #34A853',
+            }}
+          />
+          <span style={{ fontSize: 11, fontWeight: 600, color: '#34A853' }}>
+            Live
+          </span>
+        </div>
+
+        {/* Profile Avatar */}
+        <button
+          aria-label="Account profile"
+          className="touch-scale"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #1A73E8 0%, #4285F4 100%)',
+            border: '2px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 0 12px rgba(26, 115, 232, 0.35)',
+            color: '#FFFFFF',
+            fontSize: '14px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          T
+        </button>
+      </div>
     </header>
   );
 }

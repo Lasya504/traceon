@@ -20,7 +20,7 @@ export const PAYMENT_MODES = [
 
 export function getCategoryMeta(name) {
   if (name === 'Income') {
-    return { icon: '💰', color: '#52D6A1' };
+    return { icon: '💰', color: '#34A853' };
   }
   return CATEGORIES.find((c) => c.name === name) || CATEGORIES[6];
 }

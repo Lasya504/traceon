@@ -4,17 +4,22 @@ const navItems = [
   {
     label: 'Home',
     path: '/dashboard',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    icon: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke={active ? '#4285F4' : '#64748B'} strokeWidth={active ? '2.2' : '1.8'}
+        strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
       </svg>
     ),
   },
   {
     label: 'Transactions',
     path: '/transactions',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    icon: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke={active ? '#4285F4' : '#64748B'} strokeWidth={active ? '2.2' : '1.8'}
+        strokeLinecap="round" strokeLinejoin="round">
         <line x1="8" y1="6" x2="21" y2="6" />
         <line x1="8" y1="12" x2="21" y2="12" />
         <line x1="8" y1="18" x2="21" y2="18" />
@@ -26,9 +31,11 @@ const navItems = [
   },
   {
     label: 'Analytics',
-    path: '#',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    path: '/analytics',
+    icon: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke={active ? '#4285F4' : '#64748B'} strokeWidth={active ? '2.2' : '1.8'}
+        strokeLinecap="round" strokeLinejoin="round">
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
@@ -42,7 +49,7 @@ export default function BottomNav() {
   const location = useLocation();
 
   return (
-    <nav className="bottom-nav">
+    <nav className="bottom-nav" aria-label="Bottom Navigation">
       {navItems.map((item) => {
         const isActive = location.pathname === item.path;
         return (
@@ -50,8 +57,11 @@ export default function BottomNav() {
             key={item.label}
             className={`nav-item ${isActive ? 'active' : ''}`}
             onClick={() => item.path !== '#' && navigate(item.path)}
+            aria-label={item.label}
+            type="button"
           >
-            {item.icon}
+            {item.icon(isActive)}
+            <span className="nav-dot" />
             <span>{item.label}</span>
           </button>
         );

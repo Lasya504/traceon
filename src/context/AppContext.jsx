@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { fetchTransactions, addTransaction, updateTransaction, deleteTransaction, generateTransactionId } from '../services/api';
+import { parseAmount } from '../utils/analytics';
 
 const AppContext = createContext(null);
 
@@ -19,6 +20,7 @@ function Snackbar({ message, type }) {
 export function AppProvider({ children }) {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -38,11 +40,13 @@ export function AppProvider({ children }) {
 
   const loadTransactions = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await fetchTransactions();
       setTransactions(data);
     } catch (err) {
       console.error('Error loading:', err);
+      setError(err);
       showSnackbar("Couldn't load data. Try again.", 'error');
     } finally {
       setLoading(false);
@@ -60,8 +64,8 @@ export function AppProvider({ children }) {
 
   const summary = filteredTransactions.reduce(
     (acc, tx) => {
-      const credit = parseFloat(tx.Credit) || 0;
-      const debit = parseFloat(tx.Debit) || 0;
+      const credit = parseAmount(tx.Credit);
+      const debit = parseAmount(tx.Debit);
       acc.income += credit;
       acc.expenses += debit;
       return acc;
@@ -150,6 +154,7 @@ export function AppProvider({ children }) {
     transactions,
     filteredTransactions,
     loading,
+    error,
     summary,
     selectedMonth,
     setSelectedMonth,
