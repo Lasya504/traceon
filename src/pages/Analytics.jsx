@@ -29,6 +29,7 @@ export default function Analytics() {
     loading,
     error,
     selectedMonth,
+    setSelectedMonth,
     loadTransactions,
     openAddModal,
   } = useApp();
@@ -65,6 +66,11 @@ export default function Analytics() {
     }
     return max > 0 ? max : 1;
   }, [monthlyTrends]);
+
+  // Top 5 spending categories (for dedicated section)
+  const topCategories = useMemo(() => {
+    return calculateCategoryBreakdown(activeTransactions).slice(0, 5);
+  }, [activeTransactions]);
 
   const hasAnyData = transactions.length > 0;
   const hasScopedData = activeTransactions.length > 0;
@@ -591,6 +597,7 @@ export default function Analytics() {
                         cursor: 'pointer',
                       }}
                       onClick={() => {
+                        setSelectedMonth(month.yearMonth);
                         setViewScope('month');
                       }}
                       title={`${month.label}\nIncome: ₹${month.income.toLocaleString('en-IN')}\nExpense: ₹${month.expense.toLocaleString('en-IN')}\nNet: ₹${month.net.toLocaleString('en-IN')}`}
@@ -648,8 +655,86 @@ export default function Analytics() {
 
             {/* Chart Subtext / Hint */}
             <p style={{ fontSize: 11, color: '#64748B', marginTop: 10, textAlign: 'center' }}>
-              Tap any month to inspect details
+              Tap any month bar to inspect that month’s details
             </p>
+          </div>
+        )}
+
+        {/* 4. Top Spending Categories (top 5) */}
+        {!loading && !error && topCategories.length > 0 && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: 16,
+              padding: '18px 16px',
+            }}
+          >
+            <div style={{ marginBottom: 14 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', letterSpacing: '-0.01em' }}>
+                Top Spending Categories
+              </h3>
+              <p style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>
+                {viewScope === 'month' ? monthName : 'All time'} · top {topCategories.length}
+              </p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {topCategories.map((cat, idx) => {
+                const meta = getCategoryMeta(cat.category);
+                return (
+                  <div
+                    key={cat.category}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                    }}
+                  >
+                    {/* Rank */}
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#475569',
+                        width: 16,
+                        textAlign: 'right',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {idx + 1}
+                    </span>
+                    {/* Icon */}
+                    <span style={{ fontSize: 16, flexShrink: 0 }}>{meta.icon || '🏷️'}</span>
+                    {/* Name + bar */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#F1F5F9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {cat.category}
+                        </span>
+                        <span className="tabular-nums" style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', marginLeft: 8, flexShrink: 0 }}>
+                          ₹{cat.total.toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ flex: 1, height: 4, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              width: `${Math.max(4, cat.percentage)}%`,
+                              height: '100%',
+                              borderRadius: 99,
+                              backgroundColor: meta.color || '#4285F4',
+                            }}
+                          />
+                        </div>
+                        <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600, flexShrink: 0, width: 32, textAlign: 'right' }}>
+                          {cat.percentage}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 

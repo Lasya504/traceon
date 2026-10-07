@@ -64,7 +64,7 @@ function getAllRecords() {
   const data = sheet.getDataRange().getValues();
 
   if (data.length <= 1) {
-    return { records: [] };
+    return { success: true, records: [] };
   }
 
   const headers = data[0];
@@ -89,7 +89,7 @@ function getAllRecords() {
     records.push(record);
   }
 
-  return { records };
+  return { success: true, records };
 }
 
 // ─── Add Record ─────────────────────────────────────────────────

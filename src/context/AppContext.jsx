@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { fetchTransactions, addTransaction, updateTransaction, deleteTransaction, generateTransactionId } from '../services/api';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { fetchTransactions, addTransaction, updateTransaction, deleteTransaction, generateTransactionId } from '../services/transactionApi';
 import { parseAmount } from '../utils/analytics';
+import { computeDashboardMetrics } from '../utils/dashboardMetrics';
 
 const AppContext = createContext(null);
 
@@ -57,86 +58,111 @@ export function AppProvider({ children }) {
     loadTransactions();
   }, [loadTransactions]);
 
-  const filteredTransactions = transactions.filter((tx) => {
-    if (!tx.Date) return false;
-    return tx.Date.startsWith(selectedMonth);
-  });
-
-  const summary = filteredTransactions.reduce(
-    (acc, tx) => {
-      const credit = parseAmount(tx.Credit);
-      const debit = parseAmount(tx.Debit);
-      acc.income += credit;
-      acc.expenses += debit;
-      return acc;
-    },
-    { income: 0, expenses: 0 }
+  const filteredTransactions = useMemo(
+    () => transactions.filter((tx) => tx.Date && tx.Date.startsWith(selectedMonth)),
+    [transactions, selectedMonth]
   );
-  summary.savings = summary.income - summary.expenses;
+
+  // summary: backward-compatible shape used by SummaryCards and Dashboard hero
+  const summary = useMemo(() => {
+    const acc = filteredTransactions.reduce(
+      (a, tx) => {
+        a.income   += parseAmount(tx.Credit);
+        a.expenses += parseAmount(tx.Debit);
+        return a;
+      },
+      { income: 0, expenses: 0 }
+    );
+    acc.savings = acc.income - acc.expenses;
+    return acc;
+  }, [filteredTransactions]);
+
+  // dashboardMetrics: richer metrics object computed by the pure utility
+  const dashboardMetrics = useMemo(
+    () => computeDashboardMetrics(transactions, selectedMonth),
+    [transactions, selectedMonth]
+  );
 
   const handleAddTransaction = async (formData) => {
+    const amount = parseFloat(formData.amount) || 0;
+    const amountStr = Number.isInteger(amount) ? String(amount) : amount.toFixed(2);
+
     const newTx = {
       Transaction_ID: generateTransactionId(),
       Date: formData.date,
       Description: formData.description,
       Category: formData.category,
       Payment_Mode: formData.paymentMode,
-      Credit: formData.type === 'income' ? String(formData.amount) : '',
-      Debit: formData.type === 'expense' ? String(formData.amount) : '',
+      Credit: formData.type === 'income' ? amountStr : '',
+      Debit: formData.type === 'expense' ? amountStr : '',
     };
 
     setTransactions((prev) => [newTx, ...prev]);
     setModalOpen(false);
-    showSnackbar('Syncing...', 'syncing', 0);
+    showSnackbar('Syncing…', 'syncing', 0);
 
     try {
       await addTransaction(newTx);
+      // Reconcile with backend — the server row is now canonical
+      await loadTransactions();
       showSnackbar('Transaction saved');
-    } catch {
+    } catch (err) {
+      console.error('Add failed:', err);
       setTransactions((prev) => prev.filter((t) => t.Transaction_ID !== newTx.Transaction_ID));
-      showSnackbar("Couldn't sync. Try again.", 'error');
+      showSnackbar(err.message || "Couldn't sync. Try again.", 'error');
     }
   };
 
   const handleUpdateTransaction = async (formData) => {
+    const amount = parseFloat(formData.amount) || 0;
+    const amountStr = Number.isInteger(amount) ? String(amount) : amount.toFixed(2);
+
     const updatedTx = {
       Transaction_ID: formData.transactionId,
       Date: formData.date,
       Description: formData.description,
       Category: formData.category,
       Payment_Mode: formData.paymentMode,
-      Credit: formData.type === 'income' ? String(formData.amount) : '',
-      Debit: formData.type === 'expense' ? String(formData.amount) : '',
+      Credit: formData.type === 'income' ? amountStr : '',
+      Debit: formData.type === 'expense' ? amountStr : '',
     };
 
+    const previousTransactions = transactions.slice();
     setTransactions((prev) =>
       prev.map((t) => (t.Transaction_ID === updatedTx.Transaction_ID ? updatedTx : t))
     );
     setModalOpen(false);
     setEditingTransaction(null);
-    showSnackbar('Syncing...', 'syncing', 0);
+    showSnackbar('Syncing…', 'syncing', 0);
 
     try {
       await updateTransaction(updatedTx);
+      // Reconcile with backend
+      await loadTransactions();
       showSnackbar('Transaction saved');
-    } catch {
-      loadTransactions();
-      showSnackbar("Couldn't sync. Try again.", 'error');
+    } catch (err) {
+      console.error('Update failed:', err);
+      setTransactions(previousTransactions);
+      showSnackbar(err.message || "Couldn't sync. Try again.", 'error');
     }
   };
 
   const handleDeleteTransaction = async (transactionId) => {
+    const previousTransactions = transactions.slice();
     setTransactions((prev) => prev.filter((t) => t.Transaction_ID !== transactionId));
     setModalOpen(false);
     setEditingTransaction(null);
-    showSnackbar('Syncing...', 'syncing', 0);
+    showSnackbar('Syncing…', 'syncing', 0);
 
     try {
       await deleteTransaction(transactionId);
+      // Reconcile with backend — confirms row is gone
+      await loadTransactions();
       showSnackbar('Transaction deleted');
-    } catch {
-      loadTransactions();
-      showSnackbar("Couldn't sync. Try again.", 'error');
+    } catch (err) {
+      console.error('Delete failed:', err);
+      setTransactions(previousTransactions);
+      showSnackbar(err.message || "Couldn't sync. Try again.", 'error');
     }
   };
 
@@ -156,6 +182,7 @@ export function AppProvider({ children }) {
     loading,
     error,
     summary,
+    dashboardMetrics,
     selectedMonth,
     setSelectedMonth,
     modalOpen,

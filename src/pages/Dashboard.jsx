@@ -26,13 +26,10 @@ function SkeletonRow() {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { filteredTransactions, loading, openEditModal, summary } = useApp();
+  const { filteredTransactions, loading, openEditModal, summary, dashboardMetrics } = useApp();
 
-  const recentTxs = useMemo(() => {
-    return [...filteredTransactions]
-      .sort((a, b) => new Date(b.Date) - new Date(a.Date))
-      .slice(0, 5);
-  }, [filteredTransactions]);
+  // recentTransactions comes from the pure utility — no inline sort needed here
+  const recentTxs = dashboardMetrics.recentTransactions;
 
   const topCategories = useMemo(() => {
     return calculateCategoryBreakdown(filteredTransactions).slice(0, 3);
@@ -65,7 +62,7 @@ export default function Dashboard() {
             }}
           />
           <span>
-            {isPositiveBalance ? 'Saved this month' : 'Over budget this month'} · {filteredTransactions.length} {filteredTransactions.length === 1 ? 'transaction' : 'transactions'}
+            {isPositiveBalance ? 'Saved this month' : 'Over budget this month'} · {dashboardMetrics.currentMonthTxCount} {dashboardMetrics.currentMonthTxCount === 1 ? 'transaction' : 'transactions'}
           </span>
         </div>
       </div>
