@@ -1,14 +1,14 @@
 /**
- * Category icon & color mapping (Minimal)
+ * Category icon & color mapping (Calm Editorial Palette)
  */
 export const CATEGORIES = [
-  { name: 'Food & Dining', icon: '🍔', color: '#FF8A80' },
-  { name: 'Transport', icon: '🚌', color: '#6EA8FE' },
-  { name: 'Shopping', icon: '🛍️', color: '#B39DDB' },
-  { name: 'Bills & Utilities', icon: '⚡', color: '#FFD166' },
-  { name: 'Education', icon: '📚', color: '#67D4E8' },
-  { name: 'Entertainment', icon: '🎬', color: '#F48FB1' },
-  { name: 'Others', icon: '🔗', color: '#94A3B8' },
+  { name: 'Food & Dining', icon: '🍔', color: '#EA580C', bg: '#FFF7ED' },
+  { name: 'Transport', icon: '🚌', color: '#0284C7', bg: '#F0F9FF' },
+  { name: 'Shopping', icon: '🛍️', color: '#7C3AED', bg: '#F5F3FF' },
+  { name: 'Bills & Utilities', icon: '⚡', color: '#D97706', bg: '#FFFBEB' },
+  { name: 'Education', icon: '📚', color: '#0D9488', bg: '#F0FDFA' },
+  { name: 'Entertainment', icon: '🎬', color: '#DB2777', bg: '#FDF2F8' },
+  { name: 'Others', icon: '🔗', color: '#475569', bg: '#F1F5F9' },
 ];
 
 export const PAYMENT_MODES = [
@@ -20,7 +20,7 @@ export const PAYMENT_MODES = [
 
 export function getCategoryMeta(name) {
   if (name === 'Income') {
-    return { icon: '💰', color: '#34A853' };
+    return { icon: '💰', color: '#16A34A', bg: '#F0FDF4' };
   }
   return CATEGORIES.find((c) => c.name === name) || CATEGORIES[6];
 }

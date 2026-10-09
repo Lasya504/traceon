@@ -14,7 +14,6 @@ const MONTHS = [
 ];
 
 // Derive all months present in the transaction list (for the month filter).
-// Returns sorted array of { value: 'YYYY-MM', label: 'October 2026' }.
 function getAvailableMonths(transactions) {
   const seen = new Set();
   for (const tx of transactions) {
@@ -85,10 +84,10 @@ function groupByMonth(transactions) {
 // ─── Sub-components ──────────────────────────────────────────────
 function SkeletonRow() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px' }}>
       <div className="skeleton" style={{ width: 44, height: 44, borderRadius: 14, flexShrink: 0 }} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div className="skeleton" style={{ height: 15, width: '50%', borderRadius: 6 }} />
+        <div className="skeleton" style={{ height: 14, width: '50%', borderRadius: 6 }} />
         <div className="skeleton" style={{ height: 11, width: '32%', borderRadius: 6 }} />
       </div>
       <div className="skeleton" style={{ height: 16, width: 60, borderRadius: 6 }} />
@@ -101,17 +100,17 @@ function EmptyState({ hasFilters, hasData, onClear }) {
     return (
       <div className="empty-card">
         <div className="empty-icon-glow">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4285F4"
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="5" width="20" height="14" rx="2" />
             <line x1="2" y1="10" x2="22" y2="10" />
           </svg>
         </div>
-        <p style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>
+        <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
           No transactions yet
         </p>
-        <p style={{ fontSize: 13, color: '#94A3B8', maxWidth: 280, lineHeight: 1.5 }}>
-          Tap the <strong style={{ color: '#4285F4' }}>+</strong> button to record your first expense
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.5 }}>
+          Tap the <strong>+</strong> button below to record your first transaction
         </p>
       </div>
     );
@@ -121,31 +120,28 @@ function EmptyState({ hasFilters, hasData, onClear }) {
     return (
       <div className="empty-card">
         <div className="empty-icon-glow">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4285F4"
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </div>
-        <p style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>
+        <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
           No matching transactions
         </p>
-        <p style={{ fontSize: 13, color: '#94A3B8', maxWidth: 280, lineHeight: 1.5 }}>
-          No transactions match your current filters.
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.5 }}>
+          No records match your active search or filters.
         </p>
         <button
           type="button"
           onClick={onClear}
+          className="btn-primary touch-scale"
           style={{
-            marginTop: 8,
-            padding: '9px 18px',
-            borderRadius: 10,
-            background: 'rgba(66, 133, 244, 0.15)',
-            border: '1px solid rgba(66, 133, 244, 0.3)',
-            color: '#4285F4',
+            marginTop: 6,
+            width: 'auto',
+            padding: '8px 18px',
             fontSize: 13,
-            fontWeight: 600,
-            cursor: 'pointer',
+            borderRadius: 9999,
           }}
         >
           Clear Filters
@@ -161,11 +157,11 @@ function ErrorState({ onRetry }) {
   return (
     <div
       style={{
-        margin: '20px 16px',
+        margin: '20px',
         padding: '24px 20px',
-        borderRadius: 16,
-        background: 'rgba(234, 67, 53, 0.08)',
-        border: '1px solid rgba(234, 67, 53, 0.2)',
+        borderRadius: 22,
+        background: 'var(--expense-dim)',
+        border: '1px solid var(--expense-border)',
         textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
@@ -174,20 +170,20 @@ function ErrorState({ onRetry }) {
       }}
     >
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
-        stroke="#EA4335" strokeWidth="2" strokeLinecap="round">
+        stroke="var(--expense)" strokeWidth="2" strokeLinecap="round">
         <circle cx="12" cy="12" r="10" />
         <line x1="12" y1="8" x2="12" y2="12" />
         <line x1="12" y1="16" x2="12.01" y2="16" />
       </svg>
-      <p style={{ fontSize: 15, fontWeight: 700, color: '#F1F5F9' }}>Failed to load transactions</p>
-      <p style={{ fontSize: 13, color: '#94A3B8', maxWidth: 260, lineHeight: 1.4 }}>
+      <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Failed to load transactions</p>
+      <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.4 }}>
         Could not connect to Google Sheets. Check your connection and try again.
       </p>
       <button
         type="button"
         onClick={onRetry}
-        className="btn-primary"
-        style={{ width: 'auto', padding: '9px 20px', fontSize: 13, marginTop: 4 }}
+        className="btn-primary touch-scale"
+        style={{ width: 'auto', padding: '9px 20px', fontSize: 13, marginTop: 4, borderRadius: 9999 }}
       >
         Retry
       </button>
@@ -199,11 +195,11 @@ function ErrorState({ onRetry }) {
 export default function TransactionsPage() {
   const { transactions, loading, error, openEditModal, loadTransactions } = useApp();
 
-  // Filter state — all local, no extra context state
+  // Filter state
   const [search, setSearch] = useState('');
-  const [monthFilter, setMonthFilter] = useState('');   // 'YYYY-MM' | ''
-  const [categoryFilter, setCategoryFilter] = useState(''); // category name | ''
-  const [typeFilter, setTypeFilter] = useState('all');  // 'all'|'income'|'expenses'
+  const [monthFilter, setMonthFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
 
   const hasFilters = search.trim() !== '' || monthFilter !== '' || categoryFilter !== '' || typeFilter !== 'all';
 
@@ -214,10 +210,8 @@ export default function TransactionsPage() {
     setTypeFilter('all');
   }
 
-  // Derive available months from loaded data (not a separate API call)
   const availableMonths = useMemo(() => getAvailableMonths(transactions), [transactions]);
 
-  // Apply all filters in one pass — never hits the network
   const filtered = useMemo(
     () => applyFilters(transactions, { search, monthFilter, categoryFilter, typeFilter }),
     [transactions, search, monthFilter, categoryFilter, typeFilter]
@@ -228,7 +222,7 @@ export default function TransactionsPage() {
   const showEmpty = !loading && !error && grouped.length === 0;
 
   return (
-    <div className="app-shell page-in" style={{ paddingBottom: 100 }}>
+    <div className="app-shell page-in" style={{ paddingBottom: 104 }}>
 
       {/* ── Sticky Header ── */}
       <div
@@ -236,41 +230,42 @@ export default function TransactionsPage() {
           padding: '20px 20px 14px',
           position: 'sticky',
           top: 0,
-          background: 'rgba(11, 14, 23, 0.90)',
+          background: 'var(--topbar-bg)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           zIndex: 30,
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          borderBottom: '1px solid var(--topbar-border)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.03em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
             Transactions
           </h1>
           {hasFilters && (
             <button
               type="button"
               onClick={clearFilters}
+              className="touch-scale"
               style={{
                 padding: '5px 12px',
-                borderRadius: 8,
+                borderRadius: 9999,
                 fontSize: 12,
                 fontWeight: 600,
-                background: 'rgba(234, 67, 53, 0.12)',
-                border: '1px solid rgba(234, 67, 53, 0.25)',
-                color: '#EA4335',
+                background: 'var(--expense-dim)',
+                border: '1px solid var(--expense-border)',
+                color: 'var(--expense)',
                 cursor: 'pointer',
               }}
             >
-              Clear Filters
+              Reset
             </button>
           )}
         </div>
 
         {/* Search */}
-        <div className="search-wrap" style={{ marginBottom: 12 }}>
-          <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="search-wrap" style={{ marginBottom: 10 }}>
+          <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="var(--text-muted)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -291,19 +286,19 @@ export default function TransactionsPage() {
                 right: 12,
                 top: '50%',
                 transform: 'translateY(-50%)',
-                background: 'rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-surface-subtle)',
                 border: 'none',
                 borderRadius: '50%',
-                width: 22,
-                height: 22,
-                color: '#94A3B8',
+                width: 20,
+                height: 20,
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
@@ -312,7 +307,7 @@ export default function TransactionsPage() {
           )}
         </div>
 
-        {/* Type Filter Tabs */}
+        {/* Type Filter Tabs (Pill Controls) */}
         <div className="filter-tabs" style={{ marginBottom: 10 }}>
           {[
             { id: 'all', label: 'All' },
@@ -330,7 +325,7 @@ export default function TransactionsPage() {
           ))}
         </div>
 
-        {/* Month + Category Filters (second row) */}
+        {/* Month + Category Filters */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {/* Month dropdown */}
           {availableMonths.length > 0 && (
@@ -342,24 +337,21 @@ export default function TransactionsPage() {
                 style={{
                   appearance: 'none',
                   WebkitAppearance: 'none',
-                  background: monthFilter
-                    ? 'rgba(66, 133, 244, 0.18)'
-                    : 'rgba(255, 255, 255, 0.06)',
-                  border: monthFilter
-                    ? '1px solid rgba(66, 133, 244, 0.4)'
-                    : '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: 10,
-                  padding: '6px 28px 6px 10px',
+                  background: monthFilter ? 'var(--tab-active-bg)' : 'var(--bg-surface)',
+                  border: monthFilter ? '1px solid var(--tab-active-bg)' : '1px solid var(--border-medium)',
+                  borderRadius: 9999,
+                  padding: '6px 28px 6px 12px',
                   fontSize: 12,
                   fontWeight: 600,
-                  color: monthFilter ? '#4285F4' : '#94A3B8',
+                  color: monthFilter ? 'var(--tab-active-text)' : 'var(--text-secondary)',
                   cursor: 'pointer',
                   fontFamily: 'inherit',
+                  boxShadow: '0 2px 6px -1px rgba(0, 0, 0, 0.04)',
                 }}
               >
-                <option value="">All Months</option>
+                <option value="" style={{ color: 'var(--text-primary)', background: 'var(--bg-surface)' }}>All Months</option>
                 {availableMonths.map((m) => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
+                  <option key={m.value} value={m.value} style={{ color: 'var(--text-primary)', background: 'var(--bg-surface)' }}>{m.label}</option>
                 ))}
               </select>
               <svg
@@ -367,11 +359,11 @@ export default function TransactionsPage() {
                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
                 style={{
                   position: 'absolute',
-                  right: 8,
+                  right: 10,
                   top: '50%',
                   transform: 'translateY(-50%)',
                   pointerEvents: 'none',
-                  color: monthFilter ? '#4285F4' : '#64748B',
+                  color: monthFilter ? 'var(--tab-active-text)' : 'var(--text-secondary)',
                 }}
               >
                 <polyline points="6 9 12 15 18 9" />
@@ -388,25 +380,22 @@ export default function TransactionsPage() {
               style={{
                 appearance: 'none',
                 WebkitAppearance: 'none',
-                background: categoryFilter
-                  ? 'rgba(66, 133, 244, 0.18)'
-                  : 'rgba(255, 255, 255, 0.06)',
-                border: categoryFilter
-                  ? '1px solid rgba(66, 133, 244, 0.4)'
-                  : '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: 10,
-                padding: '6px 28px 6px 10px',
+                background: categoryFilter ? 'var(--tab-active-bg)' : 'var(--bg-surface)',
+                border: categoryFilter ? '1px solid var(--tab-active-bg)' : '1px solid var(--border-medium)',
+                borderRadius: 9999,
+                padding: '6px 28px 6px 12px',
                 fontSize: 12,
                 fontWeight: 600,
-                color: categoryFilter ? '#4285F4' : '#94A3B8',
+                color: categoryFilter ? 'var(--tab-active-text)' : 'var(--text-secondary)',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
+                boxShadow: '0 2px 6px -1px rgba(0, 0, 0, 0.04)',
               }}
             >
-              <option value="">All Categories</option>
-              <option value="Income">💰 Income</option>
+              <option value="" style={{ color: 'var(--text-primary)', background: 'var(--bg-surface)' }}>All Categories</option>
+              <option value="Income" style={{ color: 'var(--text-primary)', background: 'var(--bg-surface)' }}>💰 Income</option>
               {CATEGORIES.map((cat) => (
-                <option key={cat.name} value={cat.name}>{cat.icon} {cat.name}</option>
+                <option key={cat.name} value={cat.name} style={{ color: 'var(--text-primary)', background: 'var(--bg-surface)' }}>{cat.icon} {cat.name}</option>
               ))}
             </select>
             <svg
@@ -414,11 +403,11 @@ export default function TransactionsPage() {
               stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
               style={{
                 position: 'absolute',
-                right: 8,
+                right: 10,
                 top: '50%',
                 transform: 'translateY(-50%)',
                 pointerEvents: 'none',
-                color: categoryFilter ? '#4285F4' : '#64748B',
+                color: categoryFilter ? 'var(--tab-active-text)' : 'var(--text-secondary)',
               }}
             >
               <polyline points="6 9 12 15 18 9" />
@@ -432,8 +421,12 @@ export default function TransactionsPage() {
 
         {/* Loading */}
         {loading && (
-          <div>
-            <SkeletonRow /><SkeletonRow /><SkeletonRow /><SkeletonRow /><SkeletonRow />
+          <div style={{ margin: '0 20px', borderRadius: 22, overflow: 'hidden' }} className="card-surface">
+            <SkeletonRow />
+            <div style={{ height: 1, background: 'var(--border-solid)', margin: '0 16px' }} />
+            <SkeletonRow />
+            <div style={{ height: 1, background: 'var(--border-solid)', margin: '0 16px' }} />
+            <SkeletonRow />
           </div>
         )}
 
@@ -462,15 +455,15 @@ export default function TransactionsPage() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '14px 20px 8px',
+                  padding: '12px 22px 8px',
                 }}
               >
                 <span
                   style={{
                     fontSize: 12,
                     fontWeight: 700,
-                    color: '#94A3B8',
-                    letterSpacing: '0.06em',
+                    color: 'var(--text-secondary)',
+                    letterSpacing: '0.05em',
                     textTransform: 'uppercase',
                   }}
                 >
@@ -481,7 +474,7 @@ export default function TransactionsPage() {
                   style={{
                     fontSize: 13,
                     fontWeight: 700,
-                    color: isPositive ? '#34A853' : '#EA4335',
+                    color: isPositive ? 'var(--income)' : 'var(--expense)',
                     letterSpacing: '-0.01em',
                   }}
                 >
@@ -490,12 +483,12 @@ export default function TransactionsPage() {
               </div>
 
               {/* Transactions card */}
-              <div style={{ margin: '0 16px', borderRadius: 16, overflow: 'hidden' }} className="glass-card">
+              <div style={{ margin: '0 20px', borderRadius: 22, overflow: 'hidden' }} className="card-surface">
                 {group.items.map((tx, i) => (
                   <div key={tx.Transaction_ID}>
                     <TransactionItem transaction={tx} onClick={openEditModal} />
                     {i < group.items.length - 1 && (
-                      <div style={{ height: 1, background: 'rgba(255, 255, 255, 0.05)', margin: '0 20px' }} />
+                      <div style={{ height: 1, background: 'var(--border-solid)', margin: '0 16px' }} />
                     )}
                   </div>
                 ))}

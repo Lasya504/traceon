@@ -90,7 +90,7 @@ export default function TransactionModal() {
     }
   };
 
-  const amountColor = type === 'income' ? '#34A853' : '#EA4335';
+  const amountColor = type === 'income' ? 'var(--income)' : 'var(--text-primary)';
 
   return (
     <div className="modal-backdrop" onClick={() => setModalOpen(false)}>
@@ -103,31 +103,31 @@ export default function TransactionModal() {
       >
         <div className="sheet-handle" />
 
-        <div style={{ padding: '20px 22px 36px', display: 'flex', flexDirection: 'column', gap: 22 }}>
+        <div style={{ padding: '20px 22px 36px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
           {/* ── Header ── */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h2 id="modal-title" style={{ fontSize: 18, fontWeight: 700, color: '#F1F5F9', letterSpacing: '-0.02em' }}>
-              {isEdit ? 'Edit Transaction' : 'Add Transaction'}
+            <h2 id="modal-title" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+              {isEdit ? 'Edit Transaction' : 'New Transaction'}
             </h2>
             <button
               onClick={() => setModalOpen(false)}
               aria-label="Close"
               className="touch-scale"
               style={{
-                width: 34,
-                height: 34,
-                borderRadius: 10,
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                color: '#94A3B8',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: 'var(--bg-surface-subtle)',
+                border: 'none',
+                color: 'var(--text-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
               }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
@@ -142,7 +142,7 @@ export default function TransactionModal() {
               className={`type-toggle-btn ${type === 'expense' ? 'expense-active' : ''}`}
               onClick={() => setType('expense')}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="7" y1="17" x2="17" y2="7" />
                 <polyline points="7 7 17 7 17 17" />
@@ -154,7 +154,7 @@ export default function TransactionModal() {
               className={`type-toggle-btn ${type === 'income' ? 'income-active' : ''}`}
               onClick={() => setType('income')}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="17" y1="7" x2="7" y2="17" />
                 <polyline points="17 17 7 17 7 7" />
@@ -165,13 +165,13 @@ export default function TransactionModal() {
 
           {/* ── Amount (Hero Field) ── */}
           <div className="form-input-group">
-            <label className="form-label" style={{ color: amountColor }}>
-              Amount (₹)
+            <label className="form-label">
+              Amount
             </label>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
               <span
                 style={{
-                  fontSize: 30,
+                  fontSize: 28,
                   fontWeight: 700,
                   color: amountColor,
                   opacity: 0.85,
@@ -208,7 +208,7 @@ export default function TransactionModal() {
           {type === 'expense' && (
             <div className="form-input-group">
               <label className="form-label">Category</label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                 {CATEGORIES.map((cat) => {
                   const isSelected = category === cat.name;
                   return (
@@ -243,7 +243,7 @@ export default function TransactionModal() {
           {/* ── Payment Mode Chips ── */}
           <div className="form-input-group">
             <label className="form-label">Payment Mode</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
               {PAYMENT_MODES.map((pm) => {
                 const isSelected = paymentMode === pm.name;
                 return (
@@ -265,7 +265,7 @@ export default function TransactionModal() {
           </div>
 
           {/* ── Action Buttons ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 6 }}>
             <button
               onClick={handleSubmit}
               disabled={saving || !amount || !description || !date}
@@ -283,7 +283,7 @@ export default function TransactionModal() {
               ) : isEdit ? (
                 'Save Changes'
               ) : (
-                'Save Transaction'
+                'Add Transaction'
               )}
             </button>
 
@@ -293,7 +293,7 @@ export default function TransactionModal() {
                 disabled={saving}
                 className="btn-destructive touch-scale"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="3 6 5 6 21 6" />
                   <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />

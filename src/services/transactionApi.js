@@ -1,6 +1,9 @@
 /* ═══════════════════════════════════════════════════
    TraceOn — Transaction API Service Layer
    ═══════════════════════════════════════════════════
+   Legacy Google Apps Script client. Not used by the
+   active TraceOn transaction persistence path.
+   Live CRUD goes through googleSheetsApi.js.
 */
 
 const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL || '';

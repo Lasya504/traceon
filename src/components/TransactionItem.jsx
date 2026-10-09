@@ -22,13 +22,13 @@ export default function TransactionItem({ transaction, onClick }) {
       onClick={() => onClick?.(transaction)}
       type="button"
     >
-      {/* Category Icon in Glass Container */}
+      {/* Category Icon with Soft Tinted Rounded Badge */}
       <div
         className="cat-icon"
         style={{
-          background: `radial-gradient(circle, ${meta.color}25 0%, ${meta.color}10 100%)`,
+          background: meta.bg || 'var(--bg-surface-subtle)',
           color: meta.color,
-          border: `1px solid ${meta.color}35`,
+          border: '1px solid var(--border-subtle)',
         }}
       >
         {meta.icon}
@@ -38,9 +38,9 @@ export default function TransactionItem({ transaction, onClick }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <p
           style={{
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: 600,
-            color: '#F1F5F9',
+            color: 'var(--text-primary)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -53,8 +53,8 @@ export default function TransactionItem({ transaction, onClick }) {
         <div
           style={{
             fontSize: 12,
-            color: '#94A3B8',
-            marginTop: 4,
+            color: 'var(--text-secondary)',
+            marginTop: 3,
             display: 'flex',
             alignItems: 'center',
             gap: 6,
@@ -63,27 +63,27 @@ export default function TransactionItem({ transaction, onClick }) {
           <span
             style={{
               display: 'inline-block',
-              width: 6,
-              height: 6,
+              width: 5,
+              height: 5,
               borderRadius: '50%',
               backgroundColor: meta.color,
               flexShrink: 0,
             }}
           />
           <span style={{ fontWeight: 500 }}>{category}</span>
-          <span style={{ color: '#475569' }}>·</span>
+          <span style={{ color: 'var(--text-dim)' }}>·</span>
           <span>{formatDate(transaction.Date)}</span>
           {transaction.Payment_Mode && (
             <>
-              <span style={{ color: '#475569' }}>·</span>
+              <span style={{ color: 'var(--text-dim)' }}>·</span>
               <span
                 style={{
-                  fontSize: 11,
-                  padding: '1px 6px',
-                  borderRadius: '6px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                  color: '#CBD5E1',
+                  fontSize: 10,
+                  fontWeight: 600,
+                  padding: '2px 7px',
+                  borderRadius: '9999px',
+                  background: 'var(--bg-surface-subtle)',
+                  color: 'var(--text-secondary)',
                 }}
               >
                 {transaction.Payment_Mode}
@@ -93,18 +93,18 @@ export default function TransactionItem({ transaction, onClick }) {
         </div>
       </div>
 
-      {/* Amount with Tabular Numerals & Semantic Color */}
+      {/* Amount with Tabular Numerals & Clear Sign */}
       <p
         className="tabular-nums"
         style={{
-          fontSize: 16,
+          fontSize: 15,
           fontWeight: 700,
           whiteSpace: 'nowrap',
-          color: isIncome ? '#34A853' : '#F1F5F9',
+          color: isIncome ? 'var(--income)' : 'var(--text-primary)',
           letterSpacing: '-0.02em',
         }}
       >
-        <span style={{ color: isIncome ? '#34A853' : '#EA4335', marginRight: 2 }}>
+        <span style={{ color: isIncome ? 'var(--income)' : 'var(--text-muted)', marginRight: 2 }}>
           {isIncome ? '+' : '−'}
         </span>
         ₹{amount.toLocaleString('en-IN')}

@@ -11,14 +11,14 @@ export default function MonthSelector() {
   const monthLabel = `${MONTHS[parseInt(monthNum) - 1]} ${year}`;
 
   return (
-    <div style={{ padding: '4px 20px 18px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+    <div style={{ padding: '2px 20px 14px', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
       <label className="month-pill touch-scale" title="Select Month">
         <svg
-          width="15"
-          height="15"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#4285F4"
+          stroke="var(--text-primary)"
           strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -29,20 +29,19 @@ export default function MonthSelector() {
           <line x1="3" y1="10" x2="21" y2="10" />
         </svg>
 
-        <span style={{ fontWeight: 600, letterSpacing: '-0.01em' }}>
+        <span style={{ fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
           {monthLabel}
         </span>
 
         <svg
-          width="13"
-          height="13"
+          width="12"
+          height="12"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="currentColor"
+          stroke="var(--text-secondary)"
           strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ opacity: 0.6, marginLeft: 2 }}
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>

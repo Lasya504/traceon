@@ -13,11 +13,11 @@ import {
   formatMonthYearFull,
 } from '../utils/analytics';
 
-function SkeletonBlock({ height = 80, width = '100%', borderRadius = 12 }) {
+function SkeletonBlock({ height = 80, width = '100%', borderRadius = 14 }) {
   return (
     <div
       className="skeleton"
-      style={{ height, width, borderRadius, margin: '8px 0' }}
+      style={{ height, width, borderRadius, margin: '6px 0' }}
     />
   );
 }
@@ -82,17 +82,17 @@ export default function Analytics() {
 
       {/* Page Title & Scope Toggle */}
       <div style={{ padding: '16px 20px 8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.03em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
             Analytics
           </h1>
 
-          {/* Scope Toggle: This Month vs All Time */}
+          {/* Scope Toggle (Pill Control) */}
           <div
             style={{
               display: 'flex',
-              background: 'rgba(255, 255, 255, 0.06)',
-              borderRadius: 10,
+              background: 'var(--bg-surface-subtle)',
+              borderRadius: 9999,
               padding: 3,
               gap: 2,
             }}
@@ -100,15 +100,16 @@ export default function Analytics() {
             <button
               type="button"
               onClick={() => setViewScope('month')}
+              className="touch-scale"
               style={{
-                padding: '5px 12px',
-                borderRadius: 8,
+                padding: '6px 14px',
+                borderRadius: 9999,
                 fontSize: 12,
                 fontWeight: 600,
                 border: 'none',
                 cursor: 'pointer',
-                background: viewScope === 'month' ? '#1A73E8' : 'transparent',
-                color: viewScope === 'month' ? '#FFFFFF' : '#94A3B8',
+                background: viewScope === 'month' ? 'var(--tab-active-bg)' : 'transparent',
+                color: viewScope === 'month' ? 'var(--tab-active-text)' : 'var(--text-secondary)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -117,15 +118,16 @@ export default function Analytics() {
             <button
               type="button"
               onClick={() => setViewScope('all')}
+              className="touch-scale"
               style={{
-                padding: '5px 12px',
-                borderRadius: 8,
+                padding: '6px 14px',
+                borderRadius: 9999,
                 fontSize: 12,
                 fontWeight: 600,
                 border: 'none',
                 cursor: 'pointer',
-                background: viewScope === 'all' ? '#1A73E8' : 'transparent',
-                color: viewScope === 'all' ? '#FFFFFF' : '#94A3B8',
+                background: viewScope === 'all' ? 'var(--tab-active-bg)' : 'transparent',
+                color: viewScope === 'all' ? 'var(--tab-active-text)' : 'var(--text-secondary)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -136,14 +138,14 @@ export default function Analytics() {
 
         {/* Month Selector (shown when scope is 'month') */}
         {viewScope === 'month' && (
-          <div style={{ margin: '0 -20px -8px -20px' }}>
+          <div style={{ margin: '0 -20px -6px -20px' }}>
             <MonthSelector />
           </div>
         )}
       </div>
 
       {/* Main Content Area */}
-      <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: 18 }}>
 
         {/* Loading State */}
         {loading && (
@@ -158,46 +160,46 @@ export default function Analytics() {
         {!loading && error && (
           <div
             style={{
-              background: 'rgba(234, 67, 53, 0.08)',
-              border: '1px solid rgba(234, 67, 53, 0.25)',
-              borderRadius: 16,
+              background: 'var(--expense-dim)',
+              border: '1px solid var(--expense-border)',
+              borderRadius: 22,
               padding: '28px 20px',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: 10,
-              marginTop: 10,
+              marginTop: 6,
             }}
           >
             <div
               style={{
-                width: 48,
-                height: 48,
+                width: 46,
+                height: 46,
                 borderRadius: '50%',
-                background: 'rgba(234, 67, 53, 0.15)',
+                background: 'var(--expense-dim)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#EA4335',
+                color: 'var(--expense)',
               }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
               Unable to load analytics
             </p>
-            <p style={{ fontSize: 13, color: '#94A3B8', maxWidth: 280, lineHeight: 1.4 }}>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.4 }}>
               Failed to connect to Google Sheets. Please check your network and try again.
             </p>
             <button
               onClick={() => loadTransactions()}
-              className="btn-primary"
-              style={{ width: 'auto', padding: '10px 20px', fontSize: 13, marginTop: 4 }}
+              className="btn-primary touch-scale"
+              style={{ width: 'auto', padding: '9px 20px', fontSize: 13, marginTop: 4, borderRadius: 9999 }}
               type="button"
             >
               Retry Connection
@@ -207,49 +209,24 @@ export default function Analytics() {
 
         {/* Empty State (when no transactions exist at all) */}
         {!loading && !error && !hasAnyData && (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: 18,
-              padding: '40px 24px',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 12,
-              marginTop: 10,
-            }}
-          >
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 16,
-                background: 'rgba(66, 133, 244, 0.1)',
-                border: '1px solid rgba(66, 133, 244, 0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#4285F4',
-              }}
-            >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="empty-card">
+            <div className="empty-icon-glow">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="20" x2="18" y2="10" />
                 <line x1="12" y1="20" x2="12" y2="4" />
                 <line x1="6" y1="20" x2="6" y2="14" />
               </svg>
             </div>
-            <p style={{ fontSize: 17, fontWeight: 700, color: '#F1F5F9' }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
               No transaction data yet
             </p>
-            <p style={{ fontSize: 13, color: '#94A3B8', maxWidth: 280, lineHeight: 1.5 }}>
-              Add your first transaction to see your spending insights.
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.5 }}>
+              Add your first transaction to view your spending insights.
             </p>
             <button
               onClick={openAddModal}
-              className="btn-primary"
-              style={{ width: 'auto', padding: '11px 22px', fontSize: 14, marginTop: 6 }}
+              className="btn-primary touch-scale"
+              style={{ width: 'auto', padding: '10px 22px', fontSize: 13, marginTop: 4, borderRadius: 9999 }}
               type="button"
             >
               + Add Transaction
@@ -257,39 +234,16 @@ export default function Analytics() {
           </div>
         )}
 
-        {/* Empty State for Selected Month (historical data exists, but current month is empty) */}
+        {/* Empty State for Selected Month */}
         {!loading && !error && hasAnyData && !hasScopedData && (
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: 18,
-              padding: '36px 20px',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 10,
-            }}
-          >
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 14,
-                background: 'rgba(255, 255, 255, 0.05)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 22,
-              }}
-            >
+          <div className="empty-card">
+            <div className="empty-icon-glow">
               📅
             </div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#F1F5F9' }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
               No transactions in {monthName}
             </p>
-            <p style={{ fontSize: 13, color: '#94A3B8', maxWidth: 260, lineHeight: 1.4 }}>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.4 }}>
               Add an expense for {monthName}, or switch to "All Time" to view total insights.
             </p>
             <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
@@ -297,12 +251,12 @@ export default function Analytics() {
                 onClick={() => setViewScope('all')}
                 style={{
                   padding: '9px 16px',
-                  borderRadius: 10,
+                  borderRadius: 9999,
                   fontSize: 13,
                   fontWeight: 600,
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  color: '#F1F5F9',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'var(--bg-surface-subtle)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-medium)',
                   cursor: 'pointer',
                 }}
                 type="button"
@@ -311,8 +265,8 @@ export default function Analytics() {
               </button>
               <button
                 onClick={openAddModal}
-                className="btn-primary"
-                style={{ width: 'auto', padding: '9px 16px', fontSize: 13 }}
+                className="btn-primary touch-scale"
+                style={{ width: 'auto', padding: '9px 16px', fontSize: 13, borderRadius: 9999 }}
                 type="button"
               >
                 + Add Transaction
@@ -325,10 +279,10 @@ export default function Analytics() {
         {!loading && !error && hasScopedData && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                 {viewScope === 'month' ? `${monthName} Overview` : 'All Time Overview'}
               </span>
-              <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>
                 {metrics.transactionCount} {metrics.transactionCount === 1 ? 'transaction' : 'transactions'}
               </span>
             </div>
@@ -337,100 +291,96 @@ export default function Analytics() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
               {/* Total Income */}
               <div
+                className="card-surface touch-scale"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                  borderRadius: 14,
                   padding: '14px 14px',
+                  borderRadius: 18,
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#34A853' }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--income)' }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
                     Income
                   </span>
                 </div>
-                <p className="tabular-nums" style={{ fontSize: 18, fontWeight: 700, color: '#34A853' }}>
+                <p className="tabular-nums" style={{ fontSize: 17, fontWeight: 700, color: 'var(--income)' }}>
                   ₹{metrics.totalIncome.toLocaleString('en-IN')}
                 </p>
-                <p style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
                   {metrics.incomeTransactionCount} deposits
                 </p>
               </div>
 
               {/* Total Expenses */}
               <div
+                className="card-surface touch-scale"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                  borderRadius: 14,
                   padding: '14px 14px',
+                  borderRadius: 18,
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#EA4335' }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--expense)' }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
                     Expenses
                   </span>
                 </div>
-                <p className="tabular-nums" style={{ fontSize: 18, fontWeight: 700, color: '#EA4335' }}>
+                <p className="tabular-nums" style={{ fontSize: 17, fontWeight: 700, color: 'var(--expense)' }}>
                   ₹{metrics.totalExpenses.toLocaleString('en-IN')}
                 </p>
-                <p style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
                   {metrics.expenseTransactionCount} spendings
                 </p>
               </div>
 
               {/* Net Balance */}
               <div
+                className="card-surface touch-scale"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                  borderRadius: 14,
                   padding: '14px 14px',
+                  borderRadius: 18,
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#4285F4' }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--text-primary)' }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
                     Net Balance
                   </span>
                 </div>
                 <p
                   className="tabular-nums"
                   style={{
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: 700,
-                    color: metrics.netBalance >= 0 ? '#4285F4' : '#EA4335',
+                    color: metrics.netBalance >= 0 ? 'var(--text-primary)' : 'var(--expense)',
                   }}
                 >
                   {metrics.netBalance < 0 ? '−' : ''}₹{Math.abs(metrics.netBalance).toLocaleString('en-IN')}
                 </p>
-                <p style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
                   {metrics.netBalance >= 0 ? 'Surplus' : 'Deficit'}
                 </p>
               </div>
 
               {/* Average Expense per Expense Transaction */}
               <div
+                className="card-surface touch-scale"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                  borderRadius: 14,
                   padding: '14px 14px',
+                  borderRadius: 18,
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#FFD166' }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--accent-amber)' }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
                     Avg Expense
                   </span>
                 </div>
-                <p className="tabular-nums" style={{ fontSize: 18, fontWeight: 700, color: '#F1F5F9' }}>
+                <p className="tabular-nums" style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
                   ₹{metrics.averageExpense.toLocaleString('en-IN')}
                 </p>
-                <p style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>
-                  per expense txn
+                <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
+                  per expense
                 </p>
               </div>
             </div>
@@ -440,23 +390,22 @@ export default function Analytics() {
         {/* 2. Expense Category Breakdown (Horizontal Bar Chart) */}
         {!loading && !error && categoryBreakdown.length > 0 && (
           <div
+            className="card-surface"
             style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: 16,
-              padding: '18px 16px',
+              padding: '18px 18px',
+              borderRadius: 22,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <div>
-                <h3 style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', textTransform: 'none', letterSpacing: '-0.01em' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                   Expenses by Category
                 </h3>
-                <p style={{ fontSize: 11, color: '#64748B', marginTop: 2, textTransform: 'none', letterSpacing: 'normal' }}>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
                   Ranked by highest spending
                 </p>
               </div>
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#94A3B8' }}>
+              <span className="tabular-nums" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
                 ₹{metrics.totalExpenses.toLocaleString('en-IN')}
               </span>
             </div>
@@ -466,14 +415,27 @@ export default function Analytics() {
                 const meta = getCategoryMeta(cat.category);
                 return (
                   <div key={cat.category}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-                        <span style={{ fontSize: 15 }}>{meta.icon || '🏷️'}</span>
+                        <span
+                          style={{
+                            width: 26,
+                            height: 26,
+                            borderRadius: 8,
+                            background: meta.bg || 'var(--bg-surface-subtle)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 13,
+                          }}
+                        >
+                          {meta.icon || '🏷️'}
+                        </span>
                         <span
                           style={{
                             fontSize: 13,
                             fontWeight: 600,
-                            color: '#F1F5F9',
+                            color: 'var(--text-primary)',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
@@ -485,16 +447,16 @@ export default function Analytics() {
                           style={{
                             fontSize: 11,
                             padding: '1px 6px',
-                            borderRadius: 6,
-                            background: 'rgba(255, 255, 255, 0.06)',
-                            color: '#94A3B8',
+                            borderRadius: 9999,
+                            background: 'var(--bg-surface-subtle)',
+                            color: 'var(--text-secondary)',
                             fontWeight: 600,
                           }}
                         >
                           {cat.percentage}%
                         </span>
                       </div>
-                      <span className="tabular-nums" style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9' }}>
+                      <span className="tabular-nums" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
                         ₹{cat.total.toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -503,9 +465,9 @@ export default function Analytics() {
                     <div
                       style={{
                         width: '100%',
-                        height: 6,
-                        borderRadius: 99,
-                        background: 'rgba(255, 255, 255, 0.06)',
+                        height: 5,
+                        borderRadius: 9999,
+                        background: 'var(--bg-surface-subtle)',
                         overflow: 'hidden',
                       }}
                     >
@@ -513,8 +475,8 @@ export default function Analytics() {
                         style={{
                           width: `${Math.max(4, cat.percentage)}%`,
                           height: '100%',
-                          borderRadius: 99,
-                          backgroundColor: meta.color || '#4285F4',
+                          borderRadius: 9999,
+                          backgroundColor: meta.color || 'var(--btn-primary-bg)',
                           transition: 'width 0.3s ease',
                         }}
                       />
@@ -529,19 +491,18 @@ export default function Analytics() {
         {/* 3. Monthly Income vs Expense Trend (Grouped Bar Chart) */}
         {!loading && !error && monthlyTrends.length > 0 && (
           <div
+            className="card-surface"
             style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: 16,
-              padding: '18px 16px',
+              padding: '18px 18px',
+              borderRadius: 22,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div>
-                <h3 style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', textTransform: 'none', letterSpacing: '-0.01em' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                   Monthly Trends
                 </h3>
-                <p style={{ fontSize: 11, color: '#64748B', marginTop: 2, textTransform: 'none', letterSpacing: 'normal' }}>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
                   Income vs Expenses over time
                 </p>
               </div>
@@ -549,12 +510,12 @@ export default function Analytics() {
               {/* Chart Legend */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 2, background: '#34A853' }} />
-                  <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>Income</span>
+                  <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--income)' }} />
+                  <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 600 }}>Income</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 2, background: '#EA4335' }} />
-                  <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>Expense</span>
+                  <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--expense)' }} />
+                  <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 600 }}>Expense</span>
                 </div>
               </div>
             </div>
@@ -574,8 +535,8 @@ export default function Analytics() {
                   justifyContent: monthlyTrends.length <= 4 ? 'space-around' : 'space-between',
                   gap: 12,
                   height: 140,
-                  paddingTop: 20,
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                  paddingTop: 16,
+                  borderBottom: '1px solid var(--border-solid)',
                   minWidth: monthlyTrends.length > 6 ? monthlyTrends.length * 52 : 'auto',
                 }}
               >
@@ -616,20 +577,20 @@ export default function Analytics() {
                         {/* Income Bar (Emerald) */}
                         <div
                           style={{
-                            width: 12,
+                            width: 10,
                             height: incomeHeight,
-                            background: '#34A853',
+                            background: 'var(--income)',
                             borderRadius: '4px 4px 0 0',
                             transition: 'height 0.3s ease',
                           }}
                         />
 
-                        {/* Expense Bar (Crimson) */}
+                        {/* Expense Bar (Rose) */}
                         <div
                           style={{
-                            width: 12,
+                            width: 10,
                             height: expenseHeight,
-                            background: '#EA4335',
+                            background: 'var(--expense)',
                             borderRadius: '4px 4px 0 0',
                             transition: 'height 0.3s ease',
                           }}
@@ -641,7 +602,7 @@ export default function Analytics() {
                         style={{
                           fontSize: 11,
                           fontWeight: isCurrent ? 700 : 500,
-                          color: isCurrent ? '#4285F4' : '#94A3B8',
+                          color: isCurrent ? 'var(--text-primary)' : 'var(--text-muted)',
                           whiteSpace: 'nowrap',
                         }}
                       >
@@ -654,7 +615,7 @@ export default function Analytics() {
             </div>
 
             {/* Chart Subtext / Hint */}
-            <p style={{ fontSize: 11, color: '#64748B', marginTop: 10, textAlign: 'center' }}>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 10, textAlign: 'center' }}>
               Tap any month bar to inspect that month’s details
             </p>
           </div>
@@ -663,22 +624,21 @@ export default function Analytics() {
         {/* 4. Top Spending Categories (top 5) */}
         {!loading && !error && topCategories.length > 0 && (
           <div
+            className="card-surface"
             style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              borderRadius: 16,
-              padding: '18px 16px',
+              padding: '18px 18px',
+              borderRadius: 22,
             }}
           >
             <div style={{ marginBottom: 14 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#F1F5F9', letterSpacing: '-0.01em' }}>
-                Top Spending Categories
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                Top Spending Ranking
               </h3>
-              <p style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
                 {viewScope === 'month' ? monthName : 'All time'} · top {topCategories.length}
               </p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {topCategories.map((cat, idx) => {
                 const meta = getCategoryMeta(cat.category);
                 return (
@@ -695,8 +655,8 @@ export default function Analytics() {
                       style={{
                         fontSize: 11,
                         fontWeight: 700,
-                        color: '#475569',
-                        width: 16,
+                        color: 'var(--text-muted)',
+                        width: 14,
                         textAlign: 'right',
                         flexShrink: 0,
                       }}
@@ -704,29 +664,43 @@ export default function Analytics() {
                       {idx + 1}
                     </span>
                     {/* Icon */}
-                    <span style={{ fontSize: 16, flexShrink: 0 }}>{meta.icon || '🏷️'}</span>
+                    <span
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 8,
+                        background: meta.bg || 'var(--bg-surface-subtle)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 14,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {meta.icon || '🏷️'}
+                    </span>
                     {/* Name + bar */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: '#F1F5F9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {cat.category}
                         </span>
-                        <span className="tabular-nums" style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', marginLeft: 8, flexShrink: 0 }}>
+                        <span className="tabular-nums" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginLeft: 8, flexShrink: 0 }}>
                           ₹{cat.total.toLocaleString('en-IN')}
                         </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ flex: 1, height: 4, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                        <div style={{ flex: 1, height: 4, borderRadius: 9999, background: 'var(--bg-surface-subtle)', overflow: 'hidden' }}>
                           <div
                             style={{
                               width: `${Math.max(4, cat.percentage)}%`,
                               height: '100%',
-                              borderRadius: 99,
-                              backgroundColor: meta.color || '#4285F4',
+                              borderRadius: 9999,
+                              backgroundColor: meta.color || 'var(--btn-primary-bg)',
                             }}
                           />
                         </div>
-                        <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600, flexShrink: 0, width: 32, textAlign: 'right' }}>
+                        <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 600, flexShrink: 0, width: 32, textAlign: 'right' }}>
                           {cat.percentage}%
                         </span>
                       </div>
