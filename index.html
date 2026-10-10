@@ -22,11 +22,34 @@
             if (meta) meta.setAttribute('content', '#F6F7F9');
           }
         } catch (e) {}
+
+        // Self-healing: if an old cached index.html fails to load obsolete hashed scripts,
+        // invalidate cache storage and reload once to get the fresh page.
+        window.addEventListener('error', function(e) {
+          var target = e.target;
+          if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
+            try {
+              var key = 'traceon_asset_reload_' + (target.src || target.href || 'chunk');
+              if (!sessionStorage.getItem(key)) {
+                sessionStorage.setItem(key, '1');
+                if ('caches' in window) {
+                  caches.keys().then(function(keys) {
+                    Promise.all(keys.map(function(k) { return caches.delete(k); })).then(function() {
+                      window.location.reload();
+                    });
+                  });
+                } else {
+                  window.location.reload();
+                }
+              }
+            } catch (err) {}
+          }
+        }, true);
       })();
     </script>
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/svg+xml" href="/traceon-icon.svg" />
-    <link rel="apple-touch-icon" href="/traceon-icon-192.png" />
+    <link rel="apple-touch-icon" href="/traceon-icon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />

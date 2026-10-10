@@ -11,8 +11,13 @@ import Analytics from './pages/Analytics';
  * Returns null while auth or spreadsheet sync is still initializing (avoids redirect loops).
  */
 function ProtectedRoute({ children }) {
-  const { isGoogleReady, isSignedIn, isAuthenticating } = useGoogleAuth();
+  const { isGoogleReady, isSignedIn, isAuthenticating, authError } = useGoogleAuth();
   const { isSheetConnected, isSheetSyncDone } = useApp();
+
+  // If auth has an error or is unconfigured, redirect to landing
+  if (!isGoogleReady && authError) {
+    return <Navigate to="/" replace />;
+  }
 
   // Auth still initializing (GIS loading or silent re-auth in progress)
   if (!isGoogleReady || isAuthenticating) {
