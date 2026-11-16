@@ -194,7 +194,7 @@ export default function Analytics() {
               Unable to load analytics
             </p>
             <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.4 }}>
-              Failed to connect to Google Sheets. Please check your network and try again.
+              Failed to load transactions from Excel sheet. Please try again.
             </p>
             <button
               onClick={() => loadTransactions()}

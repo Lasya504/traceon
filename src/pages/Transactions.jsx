@@ -177,7 +177,7 @@ function ErrorState({ onRetry }) {
       </svg>
       <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Failed to load transactions</p>
       <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.4 }}>
-        Could not connect to Google Sheets. Check your connection and try again.
+        Could not load transactions from Excel sheet. Try again.
       </p>
       <button
         type="button"

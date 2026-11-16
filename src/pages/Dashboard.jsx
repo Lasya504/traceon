@@ -32,14 +32,10 @@ export default function Dashboard() {
     openEditModal,
     summary,
     dashboardMetrics,
-    activeSpreadsheetId,
-    activeSpreadsheetUrl,
-    isSheetConnected,
+    isExcelConnected,
+    excelFileName,
+    downloadExcel,
   } = useApp();
-
-  const sheetUrl =
-    activeSpreadsheetUrl ||
-    (activeSpreadsheetId ? `https://docs.google.com/spreadsheets/d/${activeSpreadsheetId}/edit` : null);
 
   const recentTxs = dashboardMetrics.recentTransactions;
 
@@ -56,7 +52,7 @@ export default function Dashboard() {
       <TopAppBar />
       <MonthSelector />
 
-      {/* Google Sheet Connection Banner */}
+      {/* Local Excel Connection Banner */}
       <div
         style={{
           display: 'flex',
@@ -77,56 +73,55 @@ export default function Dashboard() {
               width: 7,
               height: 7,
               borderRadius: '50%',
-              backgroundColor: isSheetConnected && activeSpreadsheetId ? 'var(--income)' : 'var(--text-muted)',
-              boxShadow: isSheetConnected && activeSpreadsheetId ? '0 0 6px var(--income)' : 'none',
+              backgroundColor: isExcelConnected ? 'var(--income)' : 'var(--text-muted)',
+              boxShadow: isExcelConnected ? '0 0 6px var(--income)' : 'none',
             }}
           />
           <span
             style={{
               fontWeight: 600,
-              color: isSheetConnected && activeSpreadsheetId ? 'var(--income)' : 'var(--text-secondary)',
+              color: isExcelConnected ? 'var(--income)' : 'var(--text-secondary)',
             }}
           >
-            {isSheetConnected && activeSpreadsheetId ? 'Google Sheet synced' : 'Sheet not connected'}
+            {isExcelConnected ? 'Excel Sheet synced' : 'Excel file offline'}
+          </span>
+          <span
+            style={{
+              fontSize: 11,
+              color: 'var(--text-muted)',
+              fontFamily: 'monospace',
+            }}
+          >
+            ({excelFileName || 'Traceon_Transactions.xlsx'})
           </span>
         </div>
 
-        {isSheetConnected && activeSpreadsheetId && sheetUrl ? (
-          <a
-            href={sheetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="touch-scale"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 4,
-              color: 'var(--text-primary)',
-              fontWeight: 700,
-              fontSize: 12,
-              textDecoration: 'none',
-            }}
-          >
-            <span>Open Sheet ↗</span>
-          </a>
-        ) : (
-          <button
-            onClick={() => navigate('/')}
-            className="touch-scale"
-            type="button"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-primary)',
-              fontSize: 12,
-              fontWeight: 700,
-              cursor: 'pointer',
-              padding: 0,
-            }}
-          >
-            Connect Sheet →
-          </button>
-        )}
+        <button
+          onClick={downloadExcel}
+          className="touch-scale"
+          type="button"
+          title="Download the Excel spreadsheet file"
+          style={{
+            background: 'var(--income-dim)',
+            border: '1px solid var(--income-border)',
+            color: 'var(--income)',
+            fontSize: 11,
+            fontWeight: 700,
+            cursor: 'pointer',
+            padding: '5px 10px',
+            borderRadius: 9999,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span>Download Excel</span>
+        </button>
       </div>
 
       {/* Hero Balance Card */}

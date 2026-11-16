@@ -2,37 +2,23 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
-import { useGoogleAuth } from '../context/GoogleAuthContext';
 import { useApp } from '../context/AppContext';
 
 export default function TopAppBar() {
   const navigate = useNavigate();
-  const { user, isSignedIn, signOut } = useGoogleAuth();
-  const { isSheetConnected, activeSpreadsheetId, resetAppState } = useApp();
+  const { isExcelConnected, excelFileName, downloadExcel, loadTransactions, resetAppState } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const isConnected = Boolean(isSignedIn && isSheetConnected && activeSpreadsheetId);
+  const isConnected = Boolean(isExcelConnected);
 
-  const handleSignOut = async () => {
+  const handleDownload = () => {
     setMenuOpen(false);
+    downloadExcel();
+  };
 
-    try {
-      resetAppState?.();
-    } catch (err) {
-      console.warn('[TraceOn] Error during resetAppState:', err);
-    }
-
-    try {
-      await signOut?.();
-    } catch (err) {
-      console.warn('[TraceOn] Error during signOut:', err);
-    }
-
-    try {
-      navigate('/', { replace: true });
-    } catch (err) {
-      console.warn('[TraceOn] Error navigating to landing:', err);
-    }
+  const handleRefresh = () => {
+    setMenuOpen(false);
+    loadTransactions();
   };
 
   return (
@@ -66,8 +52,9 @@ export default function TopAppBar() {
 
       {/* Account / Controls Cluster */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
-        {/* Live Sheet Indicator Pill */}
+        {/* Live Excel Indicator Pill */}
         <div
+          title={`Active file: ${excelFileName || 'Traceon_Transactions.xlsx'}`}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -96,7 +83,7 @@ export default function TopAppBar() {
               textTransform: 'uppercase',
             }}
           >
-            {isConnected ? 'Synced' : 'Offline'}
+            {isConnected ? 'Excel Synced' : 'Offline'}
           </span>
         </div>
 
@@ -128,15 +115,7 @@ export default function TopAppBar() {
             padding: 0,
           }}
         >
-          {user?.picture ? (
-            <img
-              src={user.picture}
-              alt={user.name || 'User'}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : (
-            (user?.name?.[0] || 'T').toUpperCase()
-          )}
+          T
         </button>
 
         {/* Profile Popover Menu */}
@@ -157,7 +136,7 @@ export default function TopAppBar() {
                 top: 'calc(100% + 10px)',
                 right: 0,
                 zIndex: 100,
-                minWidth: 230,
+                minWidth: 240,
                 padding: '16px',
                 borderRadius: 20,
                 background: 'var(--bg-surface)',
@@ -168,29 +147,31 @@ export default function TopAppBar() {
                 gap: 14,
               }}
             >
-              {/* User details */}
+              {/* Local Storage details */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div
                   style={{
                     width: 36,
                     height: 36,
                     borderRadius: '50%',
-                    background: 'var(--btn-primary-bg)',
+                    background: 'var(--income-dim)',
+                    border: '1px solid var(--income-border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--btn-primary-text)',
+                    color: 'var(--income)',
                     fontWeight: 700,
                     fontSize: 13,
-                    overflow: 'hidden',
                     flexShrink: 0,
                   }}
                 >
-                  {user?.picture ? (
-                    <img src={user.picture} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    (user?.name?.[0] || 'U').toUpperCase()
-                  )}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
                 </div>
                 <div style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <span
@@ -201,41 +182,68 @@ export default function TopAppBar() {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
-                      maxWidth: 155,
                     }}
                   >
-                    {user?.name || 'Google User'}
+                    Local Storage
                   </span>
                   <span
                     style={{
                       fontSize: 11,
-                      color: 'var(--text-secondary)',
+                      color: 'var(--income)',
+                      fontWeight: 600,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
-                      maxWidth: 155,
                     }}
                   >
-                    {user?.email || 'Connected'}
+                    {excelFileName || 'Traceon_Transactions.xlsx'}
                   </span>
                 </div>
               </div>
 
               <div style={{ height: 1, background: 'var(--border-solid)' }} />
 
-              {/* Sign out action */}
+              {/* Download Excel Sheet Action */}
               <button
                 type="button"
-                onClick={handleSignOut}
-                className="btn-destructive touch-scale"
-                style={{ padding: '9px 14px', fontSize: 13, borderRadius: 9999 }}
+                onClick={handleDownload}
+                className="btn-primary touch-scale"
+                style={{ padding: '9px 14px', fontSize: 13, borderRadius: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                <span>Sign Out</span>
+                <span>Download Excel Sheet</span>
+              </button>
+
+              {/* Refresh / Re-read File Action */}
+              <button
+                type="button"
+                onClick={handleRefresh}
+                className="touch-scale"
+                style={{
+                  padding: '8px 12px',
+                  fontSize: 12,
+                  borderRadius: 9999,
+                  background: 'var(--bg-surface-subtle)',
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--border-medium)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  fontWeight: 600,
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="23 4 23 10 17 10" />
+                  <polyline points="1 20 1 14 7 14" />
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+                <span>Re-sync from Disk</span>
               </button>
             </div>
           </>
