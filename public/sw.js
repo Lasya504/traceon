@@ -1,14 +1,14 @@
 /**
  * ═══════════════════════════════════════════════════
- * TraceOn — Service Worker (v2)
+ * TraceOn — Service Worker (v3)
  * ═══════════════════════════════════════════════════
- * - Network-First for Navigation (HTML): Guarantees users always receive
- *   the latest index.html with active Vite asset hashes.
- * - Cache-First for /assets/*: Safe because assets have content hashes.
- * - Immediate Activation & Cache Purge: Wipes obsolete traceon-v1 caches.
+ * - Never caches /api/* routes (direct to network)
+ * - Network-First for Navigation (HTML)
+ * - Cache-First for /assets/*
+ * - Automatic purge of stale caches
  */
 
-const CACHE_NAME = 'traceon-v2';
+const CACHE_NAME = 'traceon-v3';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/traceon-icon.svg',
@@ -34,6 +34,11 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
+
+  // 0. ALWAYS bypass Service Worker for API calls
+  if (url.pathname.startsWith('/api/')) {
+    return;
+  }
 
   // Only handle HTTP/HTTPS GET requests
   if (request.method !== 'GET' || !url.protocol.startsWith('http')) {

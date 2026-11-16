@@ -51,13 +51,17 @@ function normalizeAmount(value) {
 }
 
 /**
- * Fetch all transactions from the local Excel file via API.
+ * Fetch all transactions from the local Excel file via API with cache-busting.
  * Falls back to localStorage cache if offline.
  * @returns {Promise<Array<Object>>}
  */
 export async function fetchTransactions() {
   try {
-    const res = await fetch('/api/transactions', { method: 'GET' });
+    const res = await fetch(`/api/transactions?_t=${Date.now()}`, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' },
+    });
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.records)) {
@@ -156,7 +160,7 @@ export async function updateTransaction(tx) {
  */
 export async function deleteTransaction(transactionId) {
   try {
-    const res = await fetch(`/api/transactions?id=${encodeURIComponent(transactionId)}`, {
+    const res = await fetch(`/api/transactions?id=${encodeURIComponent(transactionId)}&_t=${Date.now()}`, {
       method: 'DELETE',
     });
     if (res.ok) {
@@ -177,39 +181,25 @@ export async function deleteTransaction(transactionId) {
 }
 
 /**
- * Trigger download of the Excel file.
- * Tries server file download first, and falls back to client-side generation.
+ * Download the Excel spreadsheet file.
+ * Generates the .xlsx file directly from the live transaction records,
+ * guaranteeing all records are present without stale HTTP or service worker caches.
  * @param {Array<Object>} [transactionsFallback]
  */
 export async function downloadExcelFile(transactionsFallback = []) {
-  try {
-    const res = await fetch('/api/excel/download');
-    if (res.ok) {
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'Traceon_Transactions.xlsx';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-      return;
-    }
-  } catch (err) {
-    console.warn('[TraceOn] Server download failed, exporting client-side:', err);
+  let data = transactionsFallback;
+  if (!data || data.length === 0) {
+    data = await fetchTransactions();
   }
 
-  // Client-side fallback export using xlsx
-  const data = (transactionsFallback && transactionsFallback.length > 0) ? transactionsFallback : getLocalCache();
-  const rows = data.map((t) => [
+  const rows = (data || []).map((t) => [
     t.Transaction_ID || '',
     t.Date || '',
     t.Description || '',
     t.Category || '',
     t.Payment_Mode || '',
-    t.Credit || '',
-    t.Debit || '',
+    t.Credit != null && t.Credit !== '' ? String(t.Credit) : '',
+    t.Debit != null && t.Debit !== '' ? String(t.Debit) : '',
   ]);
 
   const ws = XLSX.utils.aoa_to_sheet([REQUIRED_HEADERS, ...rows]);
@@ -233,7 +223,9 @@ export async function downloadExcelFile(transactionsFallback = []) {
  */
 export async function checkServerStatus() {
   try {
-    const res = await fetch('/api/status');
+    const res = await fetch(`/api/status?_t=${Date.now()}`, {
+      cache: 'no-store',
+    });
     if (res.ok) return await res.json();
   } catch {
     return { success: false, mode: 'local-offline' };
