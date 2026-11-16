@@ -3,17 +3,27 @@ import * as XLSX from 'xlsx';
 const LOCAL_STORAGE_KEY = 'traceon_local_transactions';
 
 export const REQUIRED_HEADERS = [
-  'Transaction_ID',
   'Date',
   'Description',
   'Category',
   'Payment_Mode',
   'Credit',
   'Debit',
+  'Total',
+];
+
+const DEFAULT_COL_WIDTHS = [
+  { wch: 14 }, // Date
+  { wch: 32 }, // Description
+  { wch: 20 }, // Category
+  { wch: 18 }, // Payment_Mode
+  { wch: 14 }, // Credit (Income)
+  { wch: 14 }, // Debit (Expense)
+  { wch: 16 }, // Total (Balance)
 ];
 
 /**
- * Generate a unique Transaction ID
+ * Generate a unique Transaction ID for internal client state
  */
 export function generateTransactionId() {
   return 'TXN_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
@@ -48,6 +58,50 @@ function normalizeAmount(value) {
   const n = parseFloat(value);
   if (isNaN(n) || n === 0) return '';
   return Number.isInteger(n) ? String(n) : n.toFixed(2);
+}
+
+/**
+ * Builds chronological rows and dynamic formula for running Total balance.
+ * Row 2: =E2-F2
+ * Row i: =G{i-1}+E{i}-F{i}
+ */
+export function buildExcelRows(transactions) {
+  const sorted = [...transactions].sort((a, b) => {
+    const da = a.Date || '';
+    const db = b.Date || '';
+    if (da < db) return -1;
+    if (da > db) return 1;
+    const ca = parseFloat(a.Credit) || 0;
+    const cb = parseFloat(b.Credit) || 0;
+    if (ca > 0 && cb === 0) return -1;
+    if (cb > 0 && ca === 0) return 1;
+    return 0;
+  });
+
+  let runningBalance = 0;
+  return sorted.map((t, idx) => {
+    const credit = parseFloat(t.Credit) || 0;
+    const debit = parseFloat(t.Debit) || 0;
+    runningBalance += (credit - debit);
+
+    const rowIndex = idx + 2; // Row 1 is header
+    const formula = rowIndex === 2 ? 'E2-F2' : `G${rowIndex - 1}+E${rowIndex}-F${rowIndex}`;
+    const totalCell = {
+      t: 'n',
+      v: Number.isInteger(runningBalance) ? runningBalance : parseFloat(runningBalance.toFixed(2)),
+      f: formula,
+    };
+
+    return [
+      t.Date || '',
+      t.Description || '',
+      t.Category || '',
+      t.Payment_Mode || '',
+      credit > 0 ? (Number.isInteger(credit) ? credit : parseFloat(credit.toFixed(2))) : '',
+      debit > 0 ? (Number.isInteger(debit) ? debit : parseFloat(debit.toFixed(2))) : '',
+      totalCell,
+    ];
+  });
 }
 
 /**
@@ -181,9 +235,8 @@ export async function deleteTransaction(transactionId) {
 }
 
 /**
- * Download the Excel spreadsheet file.
- * Generates the .xlsx file directly from the live transaction records,
- * guaranteeing all records are present without stale HTTP or service worker caches.
+ * Download the Excel spreadsheet file without Transaction_ID column,
+ * with Total balance column and dynamic running formulas.
  * @param {Array<Object>} [transactionsFallback]
  */
 export async function downloadExcelFile(transactionsFallback = []) {
@@ -192,26 +245,9 @@ export async function downloadExcelFile(transactionsFallback = []) {
     data = await fetchTransactions();
   }
 
-  const rows = (data || []).map((t) => [
-    t.Transaction_ID || '',
-    t.Date || '',
-    t.Description || '',
-    t.Category || '',
-    t.Payment_Mode || '',
-    t.Credit != null && t.Credit !== '' ? String(t.Credit) : '',
-    t.Debit != null && t.Debit !== '' ? String(t.Debit) : '',
-  ]);
-
+  const rows = buildExcelRows(data || []);
   const ws = XLSX.utils.aoa_to_sheet([REQUIRED_HEADERS, ...rows]);
-  ws['!cols'] = [
-    { wch: 22 },
-    { wch: 14 },
-    { wch: 32 },
-    { wch: 20 },
-    { wch: 18 },
-    { wch: 14 },
-    { wch: 14 },
-  ];
+  ws['!cols'] = DEFAULT_COL_WIDTHS;
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Raw_Data');

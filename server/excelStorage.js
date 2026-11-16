@@ -7,24 +7,69 @@ export const EXCEL_FILE_PATH = path.resolve(process.cwd(), EXCEL_FILE_NAME);
 export const RAW_DATA_SHEET_NAME = 'Raw_Data';
 
 export const REQUIRED_HEADERS = [
-  'Transaction_ID',
   'Date',
   'Description',
   'Category',
   'Payment_Mode',
   'Credit',
   'Debit',
+  'Total',
 ];
 
 const DEFAULT_COL_WIDTHS = [
-  { wch: 22 }, // Transaction_ID
   { wch: 14 }, // Date
   { wch: 32 }, // Description
   { wch: 20 }, // Category
   { wch: 18 }, // Payment_Mode
   { wch: 14 }, // Credit (Income)
   { wch: 14 }, // Debit (Expense)
+  { wch: 16 }, // Total (Running Balance)
 ];
+
+/**
+ * Builds chronological rows and dynamic formula for running Total balance.
+ * Row 2: =E2-F2
+ * Row i: =G{i-1}+E{i}-F{i}
+ */
+export function buildExcelRows(transactions) {
+  // Sort chronologically (oldest to newest)
+  const sorted = [...transactions].sort((a, b) => {
+    const da = a.Date || '';
+    const db = b.Date || '';
+    if (da < db) return -1;
+    if (da > db) return 1;
+    const ca = parseFloat(a.Credit) || 0;
+    const cb = parseFloat(b.Credit) || 0;
+    if (ca > 0 && cb === 0) return -1;
+    if (cb > 0 && ca === 0) return 1;
+    return 0;
+  });
+
+  let runningBalance = 0;
+  return sorted.map((t, idx) => {
+    const credit = parseFloat(t.Credit) || 0;
+    const debit = parseFloat(t.Debit) || 0;
+    runningBalance += (credit - debit);
+
+    const rowIndex = idx + 2; // Row 1 is header
+    const formula = rowIndex === 2 ? 'E2-F2' : `G${rowIndex - 1}+E${rowIndex}-F${rowIndex}`;
+    const totalCell = {
+      t: 'n',
+      v: Number.isInteger(runningBalance) ? runningBalance : parseFloat(runningBalance.toFixed(2)),
+      f: formula,
+    };
+
+    return [
+      t.Date || '',
+      t.Description || '',
+      t.Category || '',
+      t.Payment_Mode || '',
+      credit > 0 ? (Number.isInteger(credit) ? credit : parseFloat(credit.toFixed(2))) : '',
+      debit > 0 ? (Number.isInteger(debit) ? debit : parseFloat(debit.toFixed(2))) : '',
+      totalCell,
+    ];
+  });
+}
 
 /**
  * Ensure the Excel file exists on disk. If not, create it with standard headers.
@@ -53,15 +98,24 @@ export function getTransactions() {
     if (!sheet) return [];
 
     const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-    return rows.map((r, index) => ({
-      Transaction_ID: r.Transaction_ID ? String(r.Transaction_ID).trim() : `TXN_LOCAL_${index + 1}`,
-      Date: r.Date ? String(r.Date).trim() : '',
-      Description: r.Description ? String(r.Description).trim() : '',
-      Category: r.Category ? String(r.Category).trim() : '',
-      Payment_Mode: r.Payment_Mode ? String(r.Payment_Mode).trim() : '',
-      Credit: r.Credit != null && r.Credit !== '' ? String(r.Credit).trim() : '',
-      Debit: r.Debit != null && r.Debit !== '' ? String(r.Debit).trim() : '',
-    }));
+    return rows.map((r, index) => {
+      const creditStr = r.Credit != null && r.Credit !== '' ? String(r.Credit).trim() : '';
+      const debitStr = r.Debit != null && r.Debit !== '' ? String(r.Debit).trim() : '';
+      const totalStr = r.Total != null && r.Total !== '' ? String(r.Total).trim() : '';
+
+      return {
+        Transaction_ID: r.Transaction_ID
+          ? String(r.Transaction_ID).trim()
+          : `TXN_${index + 1}_${r.Date || ''}_${(r.Description || '').replace(/\s+/g, '')}`,
+        Date: r.Date ? String(r.Date).trim() : '',
+        Description: r.Description ? String(r.Description).trim() : '',
+        Category: r.Category ? String(r.Category).trim() : '',
+        Payment_Mode: r.Payment_Mode ? String(r.Payment_Mode).trim() : '',
+        Credit: creditStr,
+        Debit: debitStr,
+        Total: totalStr,
+      };
+    });
   } catch (err) {
     console.error('[TraceOn Excel] Error reading transactions:', err);
     return [];
@@ -69,20 +123,12 @@ export function getTransactions() {
 }
 
 /**
- * Overwrite transactions in the Excel sheet with provided records.
+ * Overwrite transactions in the Excel sheet without Transaction_ID column,
+ * adding the Total balance column.
  * @param {Array<Object>} transactions
  */
 export function writeTransactions(transactions) {
-  const dataRows = transactions.map((t) => [
-    t.Transaction_ID || '',
-    t.Date || '',
-    t.Description || '',
-    t.Category || '',
-    t.Payment_Mode || '',
-    t.Credit != null && t.Credit !== '' ? String(t.Credit) : '',
-    t.Debit != null && t.Debit !== '' ? String(t.Debit) : '',
-  ]);
-
+  const dataRows = buildExcelRows(transactions);
   const aoa = [REQUIRED_HEADERS, ...dataRows];
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   ws['!cols'] = DEFAULT_COL_WIDTHS;
@@ -100,8 +146,8 @@ export function writeTransactions(transactions) {
  */
 export function addTransaction(tx) {
   const current = getTransactions();
-  // Newest transactions at the top, or preserved order
-  const updated = [tx, ...current.filter((t) => t.Transaction_ID !== tx.Transaction_ID)];
+  const filtered = current.filter((t) => t.Transaction_ID !== tx.Transaction_ID);
+  const updated = [tx, ...filtered];
   writeTransactions(updated);
   return tx;
 }
