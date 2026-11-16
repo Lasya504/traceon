@@ -32,8 +32,6 @@ export default function Dashboard() {
     openEditModal,
     summary,
     dashboardMetrics,
-    isExcelConnected,
-    excelFileName,
     downloadExcel,
   } = useApp();
 
@@ -51,78 +49,6 @@ export default function Dashboard() {
     <div className="app-shell page-in" style={{ paddingBottom: 104 }}>
       <TopAppBar />
       <MonthSelector />
-
-      {/* Local Excel Connection Banner */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          margin: '0 20px 16px',
-          padding: '10px 14px',
-          borderRadius: 16,
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          boxShadow: 'var(--shadow-card)',
-          fontSize: 12,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span
-            style={{
-              width: 7,
-              height: 7,
-              borderRadius: '50%',
-              backgroundColor: isExcelConnected ? 'var(--income)' : 'var(--text-muted)',
-              boxShadow: isExcelConnected ? '0 0 6px var(--income)' : 'none',
-            }}
-          />
-          <span
-            style={{
-              fontWeight: 600,
-              color: isExcelConnected ? 'var(--income)' : 'var(--text-secondary)',
-            }}
-          >
-            {isExcelConnected ? 'Excel Sheet synced' : 'Excel file offline'}
-          </span>
-          <span
-            style={{
-              fontSize: 11,
-              color: 'var(--text-muted)',
-              fontFamily: 'monospace',
-            }}
-          >
-            ({excelFileName || 'Traceon_Transactions.xlsx'})
-          </span>
-        </div>
-
-        <button
-          onClick={downloadExcel}
-          className="touch-scale"
-          type="button"
-          title="Download the Excel spreadsheet file"
-          style={{
-            background: 'var(--income-dim)',
-            border: '1px solid var(--income-border)',
-            color: 'var(--income)',
-            fontSize: 11,
-            fontWeight: 700,
-            cursor: 'pointer',
-            padding: '5px 10px',
-            borderRadius: 9999,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 4,
-          }}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          <span>Download Excel</span>
-        </button>
-      </div>
 
       {/* Hero Balance Card */}
       <div style={{ padding: '0 20px 18px' }}>
@@ -357,6 +283,37 @@ export default function Dashboard() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Simple Excel Download Button */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '24px 0 8px' }}>
+        <button
+          onClick={downloadExcel}
+          className="touch-scale"
+          type="button"
+          title="Download Excel spreadsheet (.xlsx)"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '7px 14px',
+            borderRadius: 9999,
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-medium)',
+            color: 'var(--text-secondary)',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
+          <span>Excel</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+        </button>
       </div>
 
       <FAB />
